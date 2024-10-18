@@ -24,7 +24,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
       <Card className="max-w-md mx-auto">
         <Title level={2} className="text-center mb-6">Sign Up</Title>
         <Form name="signup" onFinish={onFinish}>

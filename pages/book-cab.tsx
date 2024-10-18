@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, message, Card, Typography } from 'antd';
 import axios from 'axios';
 import withAuth from '../components/withAuth';
+import { Cab } from '@/types';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -11,11 +12,7 @@ interface Destination {
   name: string;
 }
 
-interface Cab {
-  id: string;
-  name: string;
-  pricePerMinute: number;
-}
+
 
 const BookCab: React.FC = () => {
   const [form] = Form.useForm();

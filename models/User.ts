@@ -1,26 +1,14 @@
 import { ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
-
-export interface User {
-  _id?: ObjectId;
-  name: string;
-  email: string;
-  password: string;
-  role: 'user' | 'driver' | 'admin';
-  phoneNumber?: string;
-  address?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { User } from '@/types';
 
 export async function createUser(db: any, userData: Omit<User, '_id' | 'createdAt' | 'updatedAt'>): Promise<User> {
   const now = new Date();
   const hashedPassword = await bcrypt.hash(userData.password, 10);
   const newUser: User = {
     ...userData,
+    _id: new ObjectId(),
     password: hashedPassword,
-    createdAt: now,
-    updatedAt: now,
   };
 
   const result = await db.collection('users').insertOne(newUser);
@@ -29,6 +17,11 @@ export async function createUser(db: any, userData: Omit<User, '_id' | 'createdA
 
 export async function findUserByEmail(db: any, email: string): Promise<User | null> {
   return db.collection('users').findOne({ email });
+}
+
+//fine user by id
+export async function findUserById(db: any, userId: ObjectId): Promise<User | null> {
+  return db.collection('users').findOne({ _id: userId });
 }
 
 export async function updateUser(db: any, userId: ObjectId, updates: Partial<Omit<User, 'password'>>): Promise<User | null> {

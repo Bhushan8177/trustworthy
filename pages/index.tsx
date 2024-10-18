@@ -22,20 +22,6 @@ const HomePage: React.FC = () => {
               </Button>
             </a>
           </Link>
-          <Link href="/login">
-            <a>
-              <Button size="large" icon={<UserOutlined />}>
-                Login
-              </Button>
-            </a>
-          </Link>
-          <Link href="/signup">
-            <a>
-              <Button size="large" icon={<UserAddOutlined />}>
-                Sign Up
-              </Button>
-            </a>
-          </Link>
         </div>
       </div>
 

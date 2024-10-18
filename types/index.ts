@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 //types/index.ts
 export interface Destination {
   id: string;
@@ -5,13 +7,13 @@ export interface Destination {
 }
 
 export interface Cab {
-  id: string;
+  id: ObjectId;
   name: string;
   pricePerMinute: number;
 }
 
 export interface Booking {
-  id: string;
+  id: ObjectId;
   userEmail: string;
   source: string;
   destination: string;
@@ -19,4 +21,12 @@ export interface Booking {
   startTime: Date;
   endTime: Date;
   estimatedCost: number;
+}
+
+export interface User {
+  _id: ObjectId;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
 }
