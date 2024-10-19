@@ -10,6 +10,8 @@ export interface Cab {
   id: ObjectId;
   name: string;
   pricePerMinute: number;
+  description: string;
+  status: 'available' | 'in-progress' | 'unavailable';
 }
 
 export interface Booking {
