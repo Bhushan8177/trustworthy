@@ -10,7 +10,6 @@
     },
     "dependencies": {
         "@ant-design/icons": "^5.5.1",
-        "@reduxjs/toolkit": "^2.3.0",
         "@types/bcryptjs": "^2.4.6",
         "@types/js-cookie": "^3.0.6",
         "antd": "^5.21.4",
@@ -23,10 +22,6 @@
         "next": "^12.0.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "react-redux": "^9.1.2",
-        "redux": "^5.0.1",
-        "redux-devtools-extension": "^2.13.9",
-        "redux-thunk": "^3.1.0",
         "tailwindcss": "^3.4.14"
     },
     "devDependencies": {
