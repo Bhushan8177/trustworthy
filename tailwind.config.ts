@@ -1,3 +1,5 @@
+import exp from "constants"
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -8,3 +10,5 @@ module.exports = {
   },
   plugins: [],
 }
+
+export default {}

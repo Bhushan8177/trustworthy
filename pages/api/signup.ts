@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '../../libs/mongodb';
-import { createUser, findUserByEmail, User } from '../../models/User';
+import { createUser, findUserByEmail } from '../../models/User';
+import { User } from '../../types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -19,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         name,
         email,
         password,
-        role: role as 'user' | 'driver' | 'admin',
+        role: role as 'user' | 'driver' | 'admin'
       };
 
       const createdUser = await createUser(db, newUser);

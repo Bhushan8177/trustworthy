@@ -8,7 +8,7 @@ export async function createUser(db: any, userData: Omit<User, '_id' | 'createdA
   const newUser: User = {
     ...userData,
     _id: new ObjectId(),
-    password: hashedPassword,
+    password: hashedPassword
   };
 
   const result = await db.collection('users').insertOne(newUser);
@@ -36,3 +36,4 @@ export async function updateUser(db: any, userId: ObjectId, updates: Partial<Omi
 export async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
   return bcrypt.compare(plainPassword, hashedPassword);
 }
+

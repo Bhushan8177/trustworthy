@@ -28,7 +28,7 @@ export interface Booking {
 }
 
 export interface User {
-  _id: string;
+  _id: ObjectId;
   name: string;
   email: string;
   password: string;

@@ -34,8 +34,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       { _id: new ObjectId(decoded.userId) },
       { projection: { password: 0 } } 
     );
+    const user1 = await db.collection('users').findOne(
+      { _id: new ObjectId(decoded.userId) },
+      { projection: { password: 0 } } 
+    );
 
     if (!user) {
+      
       return res.status(404).json({ message: 'User not found' });
     }
 
