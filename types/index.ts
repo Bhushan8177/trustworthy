@@ -7,26 +7,28 @@ export interface Destination {
 }
 
 export interface Cab {
-  id: ObjectId;
+  _id: string;
   name: string;
   pricePerMinute: number;
+  status: 'available' | 'unavailable';
   description: string;
-  status: 'available' | 'in-progress' | 'unavailable';
+  startTime?: Date;
+  endTime?: Date;
 }
 
 export interface Booking {
-  id: ObjectId;
-  userEmail: string;
+  _id: string;
+  userEmail : string;
   source: string;
   destination: string;
-  cabId: string;
-  startTime: Date;
-  endTime: Date;
-  estimatedCost: number;
+  estimatedTime: number;
+  estimatedPrice: number;
+  cabName: string;
+  arrivalTime: string;
 }
 
 export interface User {
-  _id: ObjectId;
+  _id: string;
   name: string;
   email: string;
   password: string;
