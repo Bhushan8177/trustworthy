@@ -1,7 +1,7 @@
 // pages/api/user.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
-import { connectToDatabase } from '../../libs/mongodb';
+import { connectToDatabase } from '@/libs/mongodb';
 import { ObjectId } from 'mongodb';
 
 interface DecodedToken {

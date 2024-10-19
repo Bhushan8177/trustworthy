@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Menu, Button, Avatar, Dropdown } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
@@ -6,34 +6,37 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import type { MenuProps } from 'antd';
-import type { User } from '../types';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, clearUser } from '../store/userSlice';
+import { RootState } from '../store/store';
 
 const Header: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = Cookies.get('token');
-      if (token) {
-        try {
-          const response = await axios.get('/api/verify-token', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUser(response.data);
-          console.log('User data:', response.data);
-        } catch (error) {
-          console.error('Failed to fetch user data:', error);
-        }
+  const fetchUser = useCallback(async () => {
+    const token = Cookies.get('token');
+    if (token) {
+      try {
+        const response = await axios.get('/api/verify-token', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        dispatch(setUser(response.data));
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+        dispatch(clearUser());
       }
-    };
+    }
+  }, [dispatch]);
 
+  useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   const handleLogout = () => {
     Cookies.remove('token');
-    setUser(null);
+    dispatch(clearUser());
     router.push('/');
   };
 
@@ -76,7 +79,7 @@ const Header: React.FC = () => {
             </Link>
           </Menu.Item>
           <div style={{ marginLeft: 'auto' }}>
-            {user ? (
+            {user.name ? (
               <Dropdown menu={{ items: userMenuItems }}>
                 <Button type="text" style={{ color: 'white' }}>
                   <Avatar icon={<UserOutlined />} style={{ marginRight: '8px' }} />

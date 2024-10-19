@@ -1,4 +1,4 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, ObjectId } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -77,4 +77,16 @@ export async function updateCabStatus(id: string, status: 'available' | 'unavail
     .updateOne({ id: id }, { $set: { status: status } });
 
   return result.modifiedCount === 1;
+}
+
+export async function createCab(cab: Cab): Promise<string> {
+  const { db } = await connectToDatabase();
+  const result = await db.collection('cabs').insertOne(cab);
+  return result.insertedId.toString();
+}
+
+export async function deleteCab(id: ObjectId): Promise<boolean> {
+  const { db } = await connectToDatabase();
+  const result = await db.collection('cabs').deleteOne({ _id: id });
+  return result.deletedCount === 1;
 }

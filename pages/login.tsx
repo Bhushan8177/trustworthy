@@ -4,18 +4,29 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/userSlice';
 
 const { Title } = Typography;
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
       const response = await axios.post('/api/login', values);
       Cookies.set('token', response.data.token, { expires: 1 }); // Set token to expire in 1 day
+      
+      // Dispatch user data to Redux store
+      dispatch(setUser({
+        name: response.data.user.name,
+        email: response.data.user.email,
+        role: response.data.user.role
+      }));
+
       message.success('Login successful');
       
       // Check if there's a redirect URL in the query params

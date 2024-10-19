@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Card, Typography, Row, Col, message, Radio, Modal } from 'antd';
-import { Graph, createGraphFromImage } from '../utils/graph';
+import { Graph, createGraphFromImage } from '@/utils/graph';
 import GraphVisualization from './GraphVisualization';
-import { Cab } from '../types';
+import { Cab } from '@/types';
 import withAuth from '@/components/withAuth';
 import axios from 'axios';
 

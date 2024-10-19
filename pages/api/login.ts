@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
-import { connectToDatabase } from '../../libs/mongodb';
-import { findUserByEmail, verifyPassword } from '../../models/User';
+import { connectToDatabase } from '@/libs/mongodb';
+import { findUserByEmail, verifyPassword } from '@/models/User';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {

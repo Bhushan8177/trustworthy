@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectToDatabase } from '../../libs/mongodb';
+import { connectToDatabase } from '../../../../libs/mongodb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -7,7 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { db } = await connectToDatabase();
       const booking = req.body;
       booking.createdAt = new Date();
-      booking.status = 'active';
 
       const result = await db.collection('bookings').insertOne(booking);
 

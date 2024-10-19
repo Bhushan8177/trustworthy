@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, message, Typography } from 'antd';
+import { Table, Button, Modal, Form, Input, message, Typography, Select, InputNumber } from 'antd';
 import axios from 'axios';
-import withAuth from '../components/withAuth';
+import withAuth from '@/components/withAuth';
+import { Cab } from '@/types';
+import { render } from 'react-dom';
+
 
 const { Title } = Typography;
 
-interface Cab {
-  id: string;
-  name: string;
-  pricePerMinute: number;
-}
 
 const ManageCabs: React.FC = () => {
   const [cabs, setCabs] = useState<Cab[]>([]);
@@ -33,7 +31,10 @@ const ManageCabs: React.FC = () => {
   const showModal = (cab?: Cab) => {
     if (cab) {
       setEditingCab(cab);
-      form.setFieldsValue(cab);
+      form.setFieldsValue({
+        ...cab,
+        pricePerMinute: parseFloat(cab.pricePerMinute.toString()) // Ensure it's a number
+      });
     } else {
       setEditingCab(null);
       form.resetFields();
@@ -44,11 +45,18 @@ const ManageCabs: React.FC = () => {
   const handleOk = () => {
     form.validateFields().then(async (values) => {
       try {
+        const formattedValues = {
+          name: values.name,
+          pricePerMinute: parseFloat(values.pricePerMinute),
+          status: values.status,
+          description: values.description
+        };
+
         if (editingCab) {
-          await axios.put(`/api/cabs/${editingCab.id}`, values);
+          await axios.put(`/api/cabs/${editingCab._id}`, formattedValues);
           message.success('Cab updated successfully');
         } else {
-          await axios.post('/api/cabs', values);
+          await axios.post('/api/cabs', formattedValues);
           message.success('Cab added successfully');
         }
         setIsModalVisible(false);
@@ -58,6 +66,7 @@ const ManageCabs: React.FC = () => {
       }
     });
   };
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -73,13 +82,25 @@ const ManageCabs: React.FC = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      key: 'name',
+      key: 'name'
     },
     {
       title: 'Price per Minute',
       dataIndex: 'pricePerMinute',
       key: 'pricePerMinute',
-      render: (price: number) => `$${price.toFixed(2)}`,
+      render: (price: number) => `$${price}`
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => status.charAt(0).toUpperCase() + status.slice(1)
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      render: (description: string) => description
     },
     {
       title: 'Actions',
@@ -87,10 +108,11 @@ const ManageCabs: React.FC = () => {
       render: (_: any, record: Cab) => (
         <>
           <Button onClick={() => showModal(record)} className="mr-2">Edit</Button>
-          <Button danger onClick={() => handleDelete(record.id)}>Delete</Button>
+          <Button danger onClick={() => handleDelete(record._id)}>Delete</Button>
         </>
-      ),
-    },
+      )
+    }
+
   ];
 
   return (
@@ -110,8 +132,28 @@ const ManageCabs: React.FC = () => {
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="pricePerMinute" label="Price per Minute" rules={[{ required: true, type: 'number', min: 0 }]}>
-            <Input type="number" step="0.01" />
+          <Form.Item 
+            name="pricePerMinute" 
+            label="Price per Minute" 
+            rules={[{ required: true, message: 'Please input the price per minute!' }]}
+          >
+            <InputNumber
+              min={0}
+              step={0.25}
+              precision={2}
+              formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              // parser={value => value!.replace(/\$\s?|(,*)/g, '')}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="available">Available</Select.Option>
+              <Select.Option value="unavailable">Unavailable</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
