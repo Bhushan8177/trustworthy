@@ -13,6 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       const { db } = await connectToDatabase();
+      if(userEmail === 'rablohr@gmail.com'){
+        const bookings = await db
+        .collection('bookings')
+        .find()
+        .sort({ createdAt: -1 })
+        .toArray();
+        res.status(200).json(bookings || []);
+      }
+
       const bookings = await db
         .collection('bookings')
         .find({ userEmail: userEmail })

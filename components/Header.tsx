@@ -46,18 +46,18 @@ const Header: React.FC = () => {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Logout',
-      onClick: handleLogout,
-    },
+      onClick: handleLogout
+    }
   ];
 
   const menuStyle = {
     backgroundColor: 'transparent',
     border: 'none',
-    color: 'white',
+    color: 'white'
   };
 
   const menuItemStyle = {
-    color: 'white',
+    color: 'white'
   };
 
   return (
