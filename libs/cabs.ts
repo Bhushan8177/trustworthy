@@ -1,4 +1,5 @@
 import { MongoClient, Db, ObjectId } from 'mongodb';
+import { Cab } from '@/types';
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -13,15 +14,6 @@ if (!dbName) {
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
-
-export interface Cab {
-  id: string;
-  name: string;
-  pricePerMinute: number;
-  status: 'available' | 'unavailable';
-  description: string;
-}
-
 async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };

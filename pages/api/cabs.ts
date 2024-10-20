@@ -63,20 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       res.status(500).json({ message: 'Error creating cab' });
     }
-  } else if (req.method === 'DELETE') {
-    //delete a cab
-    const { id } = req.query;
-    if (!id) {
-      res.status(400).json({ message: 'Missing id' });
-      return;
-    }
-    const success = await deleteCab(id as string);
-    if (success) {
-      res.status(200).json({ message: 'Cab deleted successfully' });
-    } else {
-      res.status(404).json({ message: 'Cab not found or not deleted' });
-    }
-  }
+  } 
   else {
     res.setHeader('Allow', ['GET', 'PUT', 'POST', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

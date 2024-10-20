@@ -4,6 +4,7 @@ import axios from 'axios';
 import withAuth from '@/components/withAuth';
 import { Cab } from '@/types';
 import { render } from 'react-dom';
+import { ObjectId } from 'mongodb';
 
 
 const { Title } = Typography;
@@ -68,7 +69,7 @@ const ManageCabs: React.FC = () => {
   };
 
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: ObjectId) => {
     try {
       await axios.delete(`/api/cabs/${id}`);
       message.success('Cab deleted successfully');

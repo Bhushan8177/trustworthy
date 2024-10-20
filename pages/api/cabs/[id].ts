@@ -3,6 +3,33 @@ import { connectToDatabase } from '@/libs/mongodb';
 import { ObjectId } from 'mongodb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if(req.method === 'DELETE') {
+    try {
+      const { id } = req.query;
+      if (!id || typeof id !== 'string') {
+        return res.status(400).json({ message: 'Invalid cab ID' });
+      }
+
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid cab ID format' });
+      }
+
+      const cabId = new ObjectId(id);
+
+      const { db } = await connectToDatabase();
+      const result = await db.collection('cabs').deleteOne({ _id: cabId });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: 'Cab not found' });
+      }
+
+      res.status(200).json({ message: 'Cab deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting cab:', error);
+      res.status(500).json({ message: 'Error deleting cab', error: (error as Error).message });
+    }
+  }
+
   if (req.method !== 'PUT') {
     res.setHeader('Allow', ['PUT']);
     return res.status(405).json({ message: `Method ${req.method} Not Allowed` });

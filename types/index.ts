@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, OrderedBulkOperation } from "mongodb";
 
 //types/index.ts
 export interface Destination {
@@ -7,7 +7,7 @@ export interface Destination {
 }
 
 export interface Cab {
-  _id: string;
+  _id: ObjectId;
   name: string;
   pricePerMinute: number;
   status: 'available' | 'unavailable';
@@ -17,7 +17,7 @@ export interface Cab {
 }
 
 export interface Booking {
-  _id: string;
+  _id: ObjectId;
   userEmail : string;
   source: string;
   destination: string;
