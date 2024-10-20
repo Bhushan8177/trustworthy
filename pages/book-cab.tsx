@@ -92,7 +92,7 @@ const BookCab: React.FC = () => {
       const price = time * selectedCab.pricePerMinute;
       const arrivalTime = new Date(Date.now() + time * 60000).toLocaleTimeString();
       setBookingDetails({
-        userEmal: user.email,
+        userEmail: user.email,
         source: destinations.find(d => d.id === source)?.name,
         destination: destinations.find(d => d.id === destination)?.name,
         estimatedTime: time,
@@ -172,7 +172,8 @@ const BookCab: React.FC = () => {
               </Form.Item>
               <Form.Item name="destination" label="Destination" rules={[{ required: true }]}>
                 <Select placeholder="Select destination" onChange={calculateRoute}>
-                  {destinations.map((dest) => (
+                  {destinations.filter(dest => dest.id !== form.getFieldValue('source')).map((dest) => (
+
                     <Option key={dest.id} value={dest.id}>{dest.name}</Option>
                   ))}
                 </Select>

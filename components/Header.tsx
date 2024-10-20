@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Menu, Button, Avatar, Dropdown } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -40,6 +40,7 @@ const Header: React.FC = () => {
     router.push('/');
   };
 
+  
   const userMenuItems: MenuProps['items'] = [
     {
       key: 'logout',
@@ -76,6 +77,11 @@ const Header: React.FC = () => {
           <Menu.Item key="/manage-cabs" style={menuItemStyle}>
             <Link href="/manage-cabs">
               <a>Manage Cabs</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/booking-history" style={menuItemStyle}>
+            <Link href="/booking-history">
+              <a>Booking History</a>
             </Link>
           </Menu.Item>
           <div style={{ marginLeft: 'auto' }}>
