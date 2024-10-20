@@ -196,13 +196,13 @@ const BookCab: React.FC = () => {
                   label={selectedCabId ? null : "Select Cab"} rules={[{ required: true, message: 'Please select a cab' }]}
                 >
                   <Radio.Group onChange={(e) => handleCabSelection(e.target.value)}>
-                    <Row gutter={[16, 16]}>
+                    <Row gutter={[16, 42]}>
                       {cabs.map((cab) => (
                         <Col span={12} key={cab._id.toString()}>
                           <Radio.Button value={cab._id} disabled={cab.status === 'unavailable'}>
                             <Card
                               hoverable
-                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id ? 'border-2 border-blue-500 shadow-2xl' : 'border-0'}`}
+                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id ? 'shadow-2xl' : ''}`}
                             >
                               <Title level={4}>{cab.name}</Title>
                               <Paragraph>{cab.description}</Paragraph>
