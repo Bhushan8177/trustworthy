@@ -6,6 +6,9 @@ import { Cab } from '@/types';
 import withAuth from '@/components/withAuth';
 import axios from 'axios';
 import { ObjectId } from 'mongodb';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { Resend } from 'resend';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -34,6 +37,8 @@ const BookCab: React.FC = () => {
   const [selectedCabId, setSelectedCabId] = useState<ObjectId | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+
+  const user = useSelector((state: RootState) => state.user);
 
   const calculateRoute = () => {
     const source = form.getFieldValue('source');
@@ -87,6 +92,7 @@ const BookCab: React.FC = () => {
       const price = time * selectedCab.pricePerMinute;
       const arrivalTime = new Date(Date.now() + time * 60000).toLocaleTimeString();
       setBookingDetails({
+        userEmal: user.email,
         source: destinations.find(d => d.id === source)?.name,
         destination: destinations.find(d => d.id === destination)?.name,
         estimatedTime: time,
@@ -110,6 +116,19 @@ const BookCab: React.FC = () => {
       if (statusUpdateResponse.status !== 200) {
         throw new Error('Failed to update cab status');
       }
+      // Send an email to the user
+      try {
+        await axios.post('/api/send-mail', {
+          email: user.email,
+          subject: 'Booking Confirmed',
+          text: `Your booking has been confirmed. Cab will arrive at ${bookingDetails.arrivalTime}.`
+        });
+      } catch (error) {
+        console.error('Error sending email:', error);
+        message.error('Failed to send booking confirmation email');
+      }
+
+      
       message.success('Booking confirmed successfully!');
       
       // Refresh the cab list to reflect the updated status

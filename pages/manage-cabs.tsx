@@ -34,7 +34,7 @@ const ManageCabs: React.FC = () => {
       setEditingCab(cab);
       form.setFieldsValue({
         ...cab,
-        pricePerMinute: parseFloat(cab.pricePerMinute.toString()) // Ensure it's a number
+        pricePerMinute: parseFloat(cab.pricePerMinute.toString()) 
       });
     } else {
       setEditingCab(null);
