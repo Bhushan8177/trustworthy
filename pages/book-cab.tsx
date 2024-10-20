@@ -24,7 +24,7 @@ const destinations: Destination[] = [
   { id: 'C', name: 'Location C' },
   { id: 'D', name: 'Location D' },
   { id: 'E', name: 'Location E' },
-  { id: 'F', name: 'Location F' },
+  { id: 'F', name: 'Location F' }
 ];
 
 const BookCab: React.FC = () => {
@@ -37,12 +37,12 @@ const BookCab: React.FC = () => {
   const [selectedCabId, setSelectedCabId] = useState<ObjectId | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [source, setSource] = useState<string | null>(null);
+  const [destination, setDestination] = useState<string | null>(null);
 
   const user = useSelector((state: RootState) => state.user);
 
   const calculateRoute = () => {
-    const source = form.getFieldValue('source');
-    const destination = form.getFieldValue('destination');
     if (source && destination) {
       const { path, time } = graph.shortestPath(source, destination);
       setPath(path);
@@ -52,6 +52,17 @@ const BookCab: React.FC = () => {
       setEstimatedTime(null);
     }
   };
+
+  const handleSourceChange = (value: string) => {
+    setSource(value);
+    form.setFieldsValue({ source: value });
+  };
+
+  const handleDestinationChange = (value: string) => {
+    setDestination(value);
+    form.setFieldsValue({ destination: value });
+  };
+
 
   const fetchCabs = async () => {
     try {
@@ -69,9 +80,11 @@ const BookCab: React.FC = () => {
   };
 
   useEffect(() => {
-    calculateRoute();
-    fetchCabs();
-  }, [form.getFieldValue('source'), form.getFieldValue('destination')]);
+    if (source && destination) {
+      calculateRoute();
+      fetchCabs();
+    }
+  }, [destination]);
 
   const handleCabSelection = (cabId: ObjectId) => {
     console.log('Cab selected:', cabId);
@@ -109,10 +122,10 @@ const BookCab: React.FC = () => {
     try {
       // Confirm the booking
       const bookingResponse = await axios.post('/api/bookings', bookingDetails);
-      
+
       // Mark the cab as unavailable
       const statusUpdateResponse = await axios.put(`/api/cabs/${selectedCabId}`, { status: 'unavailable' });
-      
+
       if (statusUpdateResponse.status !== 200) {
         throw new Error('Failed to update cab status');
       }
@@ -128,12 +141,12 @@ const BookCab: React.FC = () => {
         message.error('Failed to send booking confirmation email');
       }
 
-      
+
       message.success('Booking confirmed successfully!');
-      
+
       // Refresh the cab list to reflect the updated status
       fetchCabs();
-      
+
       // Reset the form and selected cab
       form.resetFields();
       setSelectedCabId(null);
@@ -164,16 +177,15 @@ const BookCab: React.FC = () => {
           <Col span={12}>
             <Form form={form} layout="vertical" onFinish={showModal}>
               <Form.Item name="source" label="Source" rules={[{ required: true }]}>
-                <Select placeholder="Select source" onChange={calculateRoute}>
+                <Select placeholder="Select source" onChange={handleSourceChange}>
                   {destinations.map((dest) => (
                     <Option key={dest.id} value={dest.id}>{dest.name}</Option>
                   ))}
                 </Select>
               </Form.Item>
               <Form.Item name="destination" label="Destination" rules={[{ required: true }]}>
-                <Select placeholder="Select destination" onChange={calculateRoute}>
-                  {destinations.filter(dest => dest.id !== form.getFieldValue('source')).map((dest) => (
-
+                <Select placeholder="Select destination" onChange={handleDestinationChange}>
+                  {destinations.filter(dest => dest.id !== source).map((dest) => (
                     <Option key={dest.id} value={dest.id}>{dest.name}</Option>
                   ))}
                 </Select>
@@ -190,7 +202,7 @@ const BookCab: React.FC = () => {
                           <Radio.Button value={cab._id} disabled={cab.status === 'unavailable'}>
                             <Card
                               hoverable
-                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id  ? 'border-2 border-blue-500 shadow-2xl' : 'border-0'}`}
+                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id ? 'border-2 border-blue-500 shadow-2xl' : 'border-0'}`}
                             >
                               <Title level={4}>{cab.name}</Title>
                               <Paragraph>{cab.description}</Paragraph>
