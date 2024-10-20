@@ -40,7 +40,7 @@ const Header: React.FC = () => {
     router.push('/');
   };
 
-  
+
   const userMenuItems: MenuProps['items'] = [
     {
       key: 'logout',
@@ -74,16 +74,20 @@ const Header: React.FC = () => {
               <a>Book a Cab</a>
             </Link>
           </Menu.Item>
-          <Menu.Item key="/manage-cabs" style={menuItemStyle}>
-            <Link href="/manage-cabs">
-              <a>Manage Cabs</a>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/booking-history" style={menuItemStyle}>
-            <Link href="/booking-history">
-              <a>Booking History</a>
-            </Link>
-          </Menu.Item>
+          {user.role === 'admin' && (
+            <Menu.Item key="/manage-cabs" style={menuItemStyle}>
+              <Link href="/manage-cabs">
+                <a>Admin Dashboard</a>
+              </Link>
+            </Menu.Item>
+          )}
+          {user.role !== 'admin' && (
+            <Menu.Item key="/booking-history" style={menuItemStyle}>
+              <Link href="/booking-history">
+                <a>Booking History</a>
+              </Link>
+            </Menu.Item>
+          )}
           <div style={{ marginLeft: 'auto' }}>
             {user.name ? (
               <Dropdown menu={{ items: userMenuItems }}>

@@ -18,7 +18,7 @@ const withAuth = (WrappedComponent: React.ComponentType, allowedRoles: string[] 
         } else {
           try {
             // Add a small delay to allow time for the token to be set
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // await new Promise(resolve => setTimeout(resolve, 500));
             
             const res = await axios.get('/api/verify-token', {
               headers: { Authorization: `Bearer ${token}` }

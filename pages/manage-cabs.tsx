@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, message, Typography, Select, InputNumber } from 'antd';
+import { Table, Button, Modal, Form, Input, message, Typography, Select, InputNumber, Tabs } from 'antd';
 import axios from 'axios';
 import withAuth from '@/components/withAuth';
-import { Cab } from '@/types';
-import { render } from 'react-dom';
+import { Cab, Booking} from '@/types';
 import { ObjectId } from 'mongodb';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 
 const { Title } = Typography;
@@ -12,20 +13,42 @@ const { Title } = Typography;
 
 const ManageCabs: React.FC = () => {
   const [cabs, setCabs] = useState<Cab[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [cabsloading, setCabsLoading] = useState(false);
+  const [bookingsloading, setBookingsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingCab, setEditingCab] = useState<Cab | null>(null);
 
+  const user = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     fetchCabs();
+    fetchBookings();
   }, []);
 
   const fetchCabs = async () => {
+    setCabsLoading(true);
     try {
       const response = await axios.get('/api/cabs');
       setCabs(response.data);
     } catch (error) {
       message.error('Failed to fetch cabs');
+    } finally {
+      setCabsLoading(false);
+    }
+  };
+
+  const fetchBookings = async () => {
+    setBookingsLoading(true);
+    try {
+      const response = await axios.get('/api/bookings', {
+        params: { userEmail: user.email }
+      });      setBookings(response.data);
+    } catch (error) {
+      message.error('Failed to fetch bookings');
+    } finally {
+      setBookingsLoading(false);
     }
   };
 
@@ -116,13 +139,62 @@ const ManageCabs: React.FC = () => {
 
   ];
 
+  const bookingColumns = [
+    {
+      title: 'User Email',
+      dataIndex: 'userEmail',
+      key: 'userEmail',
+    },
+    {
+      title: 'Source',
+      dataIndex: 'source',
+      key: 'source',
+    },
+    {
+      title: 'Destination',
+      dataIndex: 'destination',
+      key: 'destination',
+    },
+    {
+      title: 'Estimated Time',
+      dataIndex: 'estimatedTime',
+      key: 'estimatedTime',
+      render: (time: number) => `${time} minutes`,
+    },
+    {
+      title: 'Estimated Price',
+      dataIndex: 'estimatedPrice',
+      key: 'estimatedPrice',
+      render: (price: number) => `$${price.toFixed(2)}`,
+    },
+    {
+      title: 'Cab Name',
+      dataIndex: 'cabName',
+      key: 'cabName',
+    },
+    {
+      title: 'Arrival Time',
+      dataIndex: 'arrivalTime',
+      key: 'arrivalTime',
+    },
+  ];
+
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <Title level={2}>Manage Cabs</Title>
-        <Button type="primary" onClick={() => showModal()}>Add New Cab</Button>
-      </div>
-      <Table columns={columns} dataSource={cabs} rowKey="id" />
+      <Tabs defaultActiveKey="1">
+        <Tabs.TabPane tab="Manage Cabs" key="1">
+          <div className="flex justify-between items-center mb-6">
+            <Title level={2}>Manage Cabs</Title>
+            <Button type="primary" onClick={() => showModal()}>Add New Cab</Button>
+          </div>
+          <Table columns={columns} dataSource={cabs} rowKey="_id" loading={cabsloading} />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="All Bookings" key="2">
+          <Title level={2} className="mb-6">All Bookings</Title>
+          <Table columns={bookingColumns} dataSource={bookings} rowKey="_id" loading={bookingsloading} />
+        </Tabs.TabPane>
+      </Tabs>
       <Modal
         title={editingCab ? "Edit Cab" : "Add New Cab"}
         visible={isModalVisible}

@@ -8,7 +8,6 @@ import axios from 'axios';
 import { ObjectId } from 'mongodb';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { Resend } from 'resend';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -33,12 +32,13 @@ const BookCab: React.FC = () => {
   const [cabs, setCabs] = useState<Cab[]>([]);
   const [path, setPath] = useState<string[]>([]);
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
-  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
   const [selectedCabId, setSelectedCabId] = useState<ObjectId | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [source, setSource] = useState<string | null>(null);
   const [destination, setDestination] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
 
   const user = useSelector((state: RootState) => state.user);
 
@@ -119,7 +119,9 @@ const BookCab: React.FC = () => {
 
   const handleOk = async () => {
     setIsModalVisible(false);
+    setLoading(true);
     try {
+
       // Confirm the booking
       const bookingResponse = await axios.post('/api/bookings', bookingDetails);
 
@@ -151,17 +153,13 @@ const BookCab: React.FC = () => {
       form.resetFields();
       setSelectedCabId(null);
       setEstimatedTime(null);
-      setEstimatedPrice(null);
-      setPath([]);
 
-      // Schedule the cab to become available again after the estimated time
-      setTimeout(async () => {
-        await axios.put(`/api/cabs/${selectedCabId}`, { status: 'available' });
-        fetchCabs();
-      }, bookingDetails.estimatedTime * 60000); // Convert minutes to milliseconds
+      setPath([]);      
     } catch (error) {
       console.error('Error confirming booking:', error);
       message.error('Failed to confirm booking. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -221,7 +219,7 @@ const BookCab: React.FC = () => {
               )}
 
               <Form.Item className='mt-10'>
-                <Button type="primary" htmlType="submit" block disabled={!selectedCabId || estimatedTime === null}>
+                <Button type="primary" htmlType="submit" block loading={loading} disabled={!selectedCabId || estimatedTime === null}>
                   Review Booking
                 </Button>
               </Form.Item>
