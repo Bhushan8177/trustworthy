@@ -5,6 +5,7 @@ import GraphVisualization from './GraphVisualization';
 import { Cab } from '@/types';
 import withAuth from '@/components/withAuth';
 import axios from 'axios';
+import { ObjectId } from 'mongodb';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -30,7 +31,7 @@ const BookCab: React.FC = () => {
   const [path, setPath] = useState<string[]>([]);
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
   const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
-  const [selectedCabId, setSelectedCabId] = useState<string | null>(null);
+  const [selectedCabId, setSelectedCabId] = useState<ObjectId | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
 
@@ -67,7 +68,7 @@ const BookCab: React.FC = () => {
     fetchCabs();
   }, [form.getFieldValue('source'), form.getFieldValue('destination')]);
 
-  const handleCabSelection = (cabId: string) => {
+  const handleCabSelection = (cabId: ObjectId) => {
     console.log('Cab selected:', cabId);
     setSelectedCabId(cabId);
     form.setFieldsValue({ cabId: cabId });
@@ -165,11 +166,11 @@ const BookCab: React.FC = () => {
                   <Radio.Group onChange={(e) => handleCabSelection(e.target.value)}>
                     <Row gutter={[16, 16]}>
                       {cabs.map((cab) => (
-                        <Col span={12} key={cab._id}>
+                        <Col span={12} key={cab._id.toString()}>
                           <Radio.Button value={cab._id} disabled={cab.status === 'unavailable'}>
                             <Card
                               hoverable
-                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id ? 'border-2 border-blue-500 shadow-2xl' : 'border-0'}`}
+                              className={`w-full ${cab.status === 'unavailable' ? 'opacity-50' : ''} ${selectedCabId === cab._id  ? 'border-2 border-blue-500 shadow-2xl' : 'border-0'}`}
                             >
                               <Title level={4}>{cab.name}</Title>
                               <Paragraph>{cab.description}</Paragraph>

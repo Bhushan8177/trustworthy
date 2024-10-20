@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectToDatabase } from '../../../../libs/mongodb';
-import { createUser, findUserByEmail } from '../../../../models/User';
-import { User } from '../../../../types';
+import { connectToDatabase } from '@/libs/mongodb';
+import { createUser, findUserByEmail } from '@/models/User';
+import { User } from '@/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
